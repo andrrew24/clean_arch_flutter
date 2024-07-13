@@ -11,11 +11,10 @@ class NewestBooksListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      physics: const NeverScrollableScrollPhysics(),
       padding: EdgeInsets.zero,
       itemCount: books.length,
       itemBuilder: (context, index) {
-        return  Padding(
+        return Padding(
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: BookListViewItem(
             book: books[index],

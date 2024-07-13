@@ -1,7 +1,9 @@
+import 'package:bookly/Features/home/presentation/manager/newest_books_cubit/cubit/newest_books_cubit.dart';
 import 'package:bookly/Features/home/presentation/widgets/featured_books_list_view_bloc_consumer.dart';
-import 'package:bookly/Features/home/presentation/widgets/newest_books_list_view_bloc_builder.dart';
+import 'package:bookly/Features/home/presentation/widgets/newest_books_list_view_bloc_consumer.dart';
 import 'package:bookly/core/utils/styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'custom_app_bar.dart';
 
 class HomeViewBody extends StatefulWidget {
@@ -12,11 +14,14 @@ class HomeViewBody extends StatefulWidget {
 }
 
 class _HomeViewBodyState extends State<HomeViewBody> {
-  final ScrollController _scrollController = ScrollController();
+  late ScrollController _scrollController;
+  int nextPage = 1;
+  bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
+    _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
   }
 
@@ -27,11 +32,15 @@ class _HomeViewBodyState extends State<HomeViewBody> {
     super.dispose();
   }
 
-  void _scrollListener() {
-    if (_scrollController.position.pixels >=
-        _scrollController.position.maxScrollExtent * 0.7) {
-      // Trigger your function here
-      print('Scrolled to 70%');
+  void _scrollListener() async {
+    final threshold = _scrollController.position.maxScrollExtent * 0.3;
+    if (_scrollController.position.pixels >= threshold) {
+      if (!isLoading) {
+        isLoading = true;
+        await BlocProvider.of<NewestBooksCubit>(context)
+            .fetchNewestBooks(pageNumber: nextPage++);
+        isLoading = false;
+      }
     }
   }
 
@@ -70,7 +79,7 @@ class _HomeViewBodyState extends State<HomeViewBody> {
         SliverFillRemaining(
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 30),
-            child: NewestBooksListViewBlocBuilder(),
+            child: NewestBooksListViewBlocConsumer(),
           ),
         ),
       ],

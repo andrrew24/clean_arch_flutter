@@ -10,7 +10,7 @@ class FetchNewestBooksUsecase extends UseCase<List<BookEntity>, int> {
   FetchNewestBooksUsecase({required this.homeRepo});
 
   @override
-  Future<Either<Failure, List<BookEntity>>> call([int param=0]) async {
-    return await homeRepo.fetchNewestBooks();
+  Future<Either<Failure, List<BookEntity>>> call([int param = 0]) async {
+    return await homeRepo.fetchNewestBooks(pageNumber: param);
   }
 }
